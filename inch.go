@@ -244,6 +244,7 @@ func (s *Simulator) Run(ctx context.Context) error {
 		fmt.Fprintf(s.Stdout, "Time span: %s\n", dur)
 	}
 
+	s.AnnotateBecnhmark("start")
 	// Stream batches from a separate goroutine.
 	ch := s.generateBatches()
 
@@ -272,8 +273,34 @@ func (s *Simulator) Run(ctx context.Context) error {
 	elapsed := time.Since(s.now)
 	fmt.Fprintln(s.Stdout, "")
 	fmt.Fprintf(s.Stdout, "Total time: %0.1f seconds\n", elapsed.Seconds())
-
+	s.AnnotateBecnhmark("end")
 	return nil
+}
+
+//Send an annotation at the start and end of the run
+func (s *Simulator) AnnotateBecnhmark(message string) {
+	bp, err := client.NewBatchPoints(client.BatchPointsConfig{
+		Database: "ingest_benchmarks",
+	})
+	if err != nil {
+		panic(err)
+	}
+	measurement := "annotations"
+	fields := models.Fields(map[string]interface{}{
+		"message": message,
+	})
+
+	t := time.Now().UTC()
+	p, err := client.NewPoint(measurement, s.ReportTags, fields, t)
+	if err != nil {
+		panic(err)
+	}
+	bp.AddPoint(p)
+
+	if err := s.clt.Write(bp); err != nil {
+		fmt.Fprintf(s.Stderr, "unable to report stats to Influx: %v", err)
+	}
+
 }
 
 // WrittenN returns the total number of points written.

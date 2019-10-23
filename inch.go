@@ -245,7 +245,7 @@ func (s *Simulator) Run(ctx context.Context) error {
 		fmt.Fprintf(s.Stdout, "Time span: %s\n", dur)
 	}
 	if s.ReportHost != "" {
-		s.AnnotateBecnhmark("start")
+		s.AnnotateBecnhmark("Start")
 	}
 	// Stream batches from a separate goroutine.
 	ch := s.generateBatches()
@@ -276,7 +276,7 @@ func (s *Simulator) Run(ctx context.Context) error {
 	fmt.Fprintln(s.Stdout, "")
 	fmt.Fprintf(s.Stdout, "Total time: %0.1f seconds\n", elapsed.Seconds())
 	if s.ReportHost != "" {
-		s.AnnotateBecnhmark("end")
+		s.AnnotateBecnhmark("End")
 	}
 	return nil
 }
@@ -291,7 +291,7 @@ func (s *Simulator) AnnotateBecnhmark(message string) {
 	}
 	measurement := "annotations"
 
-	message = fmt.Sprintf("%s %s %s %s %s %s", message, s.ReportTags["batch_size"],
+	message = fmt.Sprintf("%s %s %s %s %s %s %s", message,s.Annotation s.ReportTags["batch_size"],
 		s.ReportTags["c"], s.ReportTags["f"], s.ReportTags["p"], s.ReportTags["t"])
 	fields := models.Fields(map[string]interface{}{
 		"message": message,

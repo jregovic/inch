@@ -85,7 +85,7 @@ func (m *Main) ParseFlags(args []string) error {
 	fs.DurationVar(&m.inch.Delay, "delay", 0, "Delay between writes")
 	fs.DurationVar(&m.inch.TargetMaxLatency, "target-latency", 0, "If set inch will attempt to adapt write delay to meet target")
 	fs.BoolVar(&m.inch.Gzip, "gzip", false, "Use gzip compression")
-
+	fs.StringVar(&m.inch.Annotation, "annotation", "", "test name for annotation")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}

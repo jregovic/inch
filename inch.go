@@ -100,6 +100,7 @@ type Simulator struct {
 	StartTime     string        // Set a custom start time.
 	TimeSpan      time.Duration // The length of time to span writes over.
 	Delay         time.Duration // A delay inserted in between writes.
+	Annotation    string
 }
 
 // NewSimulator returns a new instance of Simulator.
@@ -243,8 +244,9 @@ func (s *Simulator) Run(ctx context.Context) error {
 	} else {
 		fmt.Fprintf(s.Stdout, "Time span: %s\n", dur)
 	}
-
-	s.AnnotateBecnhmark("start")
+	if s.ReportHost != "" {
+		s.AnnotateBecnhmark("start")
+	}
 	// Stream batches from a separate goroutine.
 	ch := s.generateBatches()
 
@@ -273,7 +275,9 @@ func (s *Simulator) Run(ctx context.Context) error {
 	elapsed := time.Since(s.now)
 	fmt.Fprintln(s.Stdout, "")
 	fmt.Fprintf(s.Stdout, "Total time: %0.1f seconds\n", elapsed.Seconds())
-	s.AnnotateBecnhmark("end")
+	if s.ReportHost != "" {
+		s.AnnotateBecnhmark("end")
+	}
 	return nil
 }
 
@@ -286,6 +290,9 @@ func (s *Simulator) AnnotateBecnhmark(message string) {
 		panic(err)
 	}
 	measurement := "annotations"
+
+	message = fmt.Sprintf("%s %s %s %s %s %s", message, s.ReportTags["batch_size"],
+		s.ReportTags["c"], s.ReportTags["f"], s.ReportTags["p"], s.ReportTags["t"])
 	fields := models.Fields(map[string]interface{}{
 		"message": message,
 	})

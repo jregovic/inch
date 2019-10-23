@@ -291,7 +291,7 @@ func (s *Simulator) AnnotateBecnhmark(message string) {
 	}
 	measurement := "annotations"
 
-	message = fmt.Sprintf("%s %s %s %s %s %s %s", message,s.Annotation s.ReportTags["batch_size"],s.ReportTags["c"], s.ReportTags["f"], s.ReportTags["p"], s.ReportTags["t"])
+	message = fmt.Sprintf("%s %s %s %s %s %s %s", message, s.Annotation, s.ReportTags["batch_size"], s.ReportTags["c"], s.ReportTags["f"], s.ReportTags["p"], s.ReportTags["t"])
 	fields := models.Fields(map[string]interface{}{
 		"message": message,
 	})
